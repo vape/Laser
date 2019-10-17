@@ -9,7 +9,7 @@ namespace Laser.Game.Main
         public LineRenderer RayLine;
 
         private Tracer tracer = new Tracer();
-        private List<TraceHitPoint> currentTrace = new List<TraceHitPoint>();
+        private Trace currentTrace;
         private AbsorberController touchedAbsorber;
         private int skippedFrames;
 
@@ -31,9 +31,9 @@ namespace Laser.Game.Main
             touchedAbsorber = null;
             currentTrace = tracer.Trace(RayLine.transform.position, transform.rotation * Vector3.forward);
 
-            for (int i = 0; i < currentTrace.Count; ++i)
+            for (int i = 0; i < currentTrace.Points.Count; ++i)
             {
-                var absorber = currentTrace[i].Transform?.GetComponent<AbsorberController>();
+                var absorber = currentTrace.Points[i].Transform?.GetComponent<AbsorberController>();
                 if (absorber != null)
                 {
                     touchedAbsorber = absorber;
@@ -44,13 +44,20 @@ namespace Laser.Game.Main
 
         private void RefreshLineRenderer()
         {
-            if (currentTrace?.Count == 0)
+            if (currentTrace == null)
             {
                 RayLine.SetPositions(new Vector3[0]);
                 return;
             }
 
-            var positions = currentTrace.Select((t) => RayLine.transform.InverseTransformPoint(t.Position)).ToArray();
+            var _positions = currentTrace.Points.Select((t) => RayLine.transform.InverseTransformPoint(t.Position));
+            if (!currentTrace.Closed)
+            {
+                var p = RayLine.transform.InverseTransformPoint(currentTrace.Points[currentTrace.Points.Count - 1].Position);
+                var d = RayLine.transform.InverseTransformDirection(currentTrace.Points[currentTrace.Points.Count - 1].ReflectedDirection);
+                _positions = _positions.Concat(new Vector3[1] { p + (d * 100) });
+            }
+            var positions = _positions.ToArray();
             var color = touchedAbsorber == null ? Color.red : Color.green;
 
             RayLine.positionCount = positions.Length;

@@ -14,11 +14,17 @@ namespace Laser.Game.Main
         public Transform Transform;
     }
 
+    public class Trace
+    {
+        public List<TraceHitPoint> Points;
+        public bool Closed;
+    }
+
     public class Tracer
     {
         public int MaxRays = 100;
 
-        public List<TraceHitPoint> Trace(Vector3 origin, Vector3 direction)
+        public Trace Trace(Vector3 origin, Vector3 direction)
         {
             var points = new List<TraceHitPoint>();
             points.Add(new TraceHitPoint() {
@@ -40,11 +46,17 @@ namespace Laser.Game.Main
                 r++;
             }
 
+            var trace = new Trace()
+            {
+                Points = points,
+                Closed = p != null
+            };
+
 #if DEBUG_DRAW
             Debug.DrawRay(points[points.Count - 1].Position, points[points.Count - 1].ReflectedDirection);
 #endif
 
-            return points;
+            return trace;
         }
 
         private static TraceHitPoint TraceInternal(Vector3 origin, Vector3 direction)
