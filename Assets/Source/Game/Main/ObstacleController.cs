@@ -52,7 +52,7 @@ namespace Laser.Game.Main
 
         private void Update()
         {
-            var a = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, targetAngle, ref speedTowardsTargetAngle, 0.1f);
+            var a = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, targetAngle, ref speedTowardsTargetAngle, 0.25f);
             transform.rotation = Quaternion.Euler(0, a, 0);
         }
 
