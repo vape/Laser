@@ -1,0 +1,16 @@
+{
+    "name": "Laser.Editor",
+    "references": [
+        "GUID:11d19e063bd4d81429b99eb5c150f926"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

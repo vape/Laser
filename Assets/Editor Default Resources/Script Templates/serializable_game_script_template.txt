@@ -1,0 +1,14 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+
+namespace #NAMESPACE#
+{
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
+    public class #SCRIPTNAME#
+    {
+        
+    }
+}
