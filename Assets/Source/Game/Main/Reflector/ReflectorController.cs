@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Laser.Game.Main
 {
     // north is (0,0,1)
-    public enum ObstacleOrientation
+    public enum ReflectorOrientation
     {
         N,
         NE,
@@ -16,31 +16,33 @@ namespace Laser.Game.Main
         NW
     }
 
-    public static class ObstacleOrientationExtensions
+    public static class ReflectorOrientationExtensions
     {
-        public static float ToRotationAngle(this ObstacleOrientation o)
+        public static float ToRotationAngle(this ReflectorOrientation o)
         {
             return 45f * (int)o;
         }
     }
 
-    public class ObstacleController : MonoBehaviour, IGameObjectClickHandler
+    public class ReflectorController : MonoBehaviour, IGameObjectClickHandler
     {
-        public List<ObstacleOrientation> AvailableOrientations
-        { get; set; } = new List<ObstacleOrientation>()
+        public List<ReflectorOrientation> AvailableOrientations
+        { get; set; } = new List<ReflectorOrientation>()
         {
-            ObstacleOrientation.N,
-            ObstacleOrientation.NE,
-            ObstacleOrientation.E,
-            ObstacleOrientation.SE,
-            ObstacleOrientation.S,
-            ObstacleOrientation.SW,
-            ObstacleOrientation.W,
-            ObstacleOrientation.NW
+            ReflectorOrientation.N,
+            ReflectorOrientation.NE,
+            ReflectorOrientation.E,
+            ReflectorOrientation.SE,
+            ReflectorOrientation.S,
+            ReflectorOrientation.SW,
+            ReflectorOrientation.W,
+            ReflectorOrientation.NW
         };
 
-        public ObstacleOrientation CurrentOrientation
-        { get; set; } = ObstacleOrientation.N;
+        public ReflectorOrientation CurrentOrientation
+        { get; set; } = ReflectorOrientation.N;
+
+        public ReflectorType Type;
 
         private float targetAngle;
         private float speedTowardsTargetAngle;
@@ -52,7 +54,7 @@ namespace Laser.Game.Main
 
         private void Update()
         {
-            var a = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, targetAngle, ref speedTowardsTargetAngle, 0.25f);
+            var a = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, targetAngle, ref speedTowardsTargetAngle, 0.1f);
             transform.rotation = Quaternion.Euler(0, a, 0);
         }
 

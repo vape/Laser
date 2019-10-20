@@ -2,6 +2,7 @@
 // #define DEBUG_DRAW
 #endif
 
+using Laser.Game.Main.Reflector;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,6 +43,17 @@ namespace Laser.Game.Main
 #endif
 
                 points.Add(p);
+
+                if (p?.Transform?.GetComponent<ReflectiveSurfaceController>() == null)
+                {
+                    break;
+                }
+
+                if (p?.Transform?.GetComponent<AbsorberController>() != null)
+                {
+                    break;
+                }
+
                 p = TraceInternal(p.Position, p.ReflectedDirection);
                 r++;
             }

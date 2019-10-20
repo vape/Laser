@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
 
-namespace Laser.Game.Main
+namespace Laser.Game.Main.Grid
 {
+    [ExecuteInEditMode]
     public class GridElementController : MonoBehaviour
     {
         public bool IsDirty

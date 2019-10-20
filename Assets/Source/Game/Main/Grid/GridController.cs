@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-namespace Laser.Game.Main
+namespace Laser.Game.Main.Grid
 {
     public struct GridTile
     {
@@ -14,6 +14,7 @@ namespace Laser.Game.Main
         }
     }
 
+    [ExecuteInEditMode]
     public class GridController : MonoBehaviour
     {
         public bool IsDirty
@@ -41,6 +42,7 @@ namespace Laser.Game.Main
         { get { return transform.position; } }
 
         private bool isDirty;
+        private float prevCellSize;
 
         private void Start()
         {
@@ -52,6 +54,7 @@ namespace Laser.Game.Main
             if (isDirty)
             {
                 Layout();
+                isDirty = false;
             }
         }
 

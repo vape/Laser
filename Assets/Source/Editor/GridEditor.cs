@@ -1,11 +1,12 @@
 using Laser.Game.Main;
+using Laser.Game.Main.Grid;
 using UnityEditor;
 using UnityEngine;
 
 namespace Laser.Editor
 {
     [CustomEditor(typeof(GridController))]
-    public class GridEditor : UnityEditor.Editor
+    public partial class GridEditor : UnityEditor.Editor
     {
         private static Vector3? tileRectPosition;
         private static Vector3? tileRectSize;
@@ -76,8 +77,8 @@ namespace Laser.Editor
                     var a = _target.GridToWorld(new Vector2(rect.xMin, rect.yMin));
                     var b = _target.GridToWorld(new Vector2(rect.xMax, rect.yMax));
 
-                    tileRectPosition = _target.GridToWorld(rect.center);
-                    tileRectSize = new Vector3(b.x - a.x, 0.5f, b.z - a.z);
+                    tileRectPosition = _target.GridToWorld(rect.center) + new Vector3(0, 1, 0);
+                    tileRectSize = new Vector3(b.x - a.x, 1, b.z - a.z);
                 }
             }
 
