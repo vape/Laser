@@ -8,19 +8,13 @@ namespace Laser.Game.Utils
     {
         public Plane Floor
         { get { return floor; } }
-        
-        [SerializeField]
+
         public float MinCameraSize = 8;
-        [SerializeField]
         public float MaxCameraSize = 12;
-        [SerializeField]
         public Vector2 BoundsA;
-        [SerializeField]
         public Vector2 BoundsB;
-        [SerializeField]
         public float TouchZoomSpeed = 0.5f;
         [Range(0, 5)]
-        [SerializeField]
         public float Smoothness = 1f;
 
         private CameraScrollAreaController scrollArea;
@@ -67,6 +61,22 @@ namespace Laser.Game.Utils
 
             transform.position = SmoothDamp(transform.position, target, ref velocity, 0.075f * Smoothness);
             camera.orthographicSize = Mathf.Clamp(Mathf.SmoothDamp(camera.orthographicSize, targetSize, ref sizeVelocity, 0.1f), MinCameraSize, MaxCameraSize);
+        }
+
+        private void FocusOnPoint(Vector3 point, bool immediately)
+        {
+            var dir = camera.transform.rotation * Vector3.back;
+            var plane = new Plane(Vector3.down, camera.transform.position);
+            if (plane.Raycast(new Ray(point, dir), out float distance))
+            {
+                var pos = point + dir.normalized * distance;
+                target = pos;
+
+                if (immediately)
+                {
+                    camera.transform.position = pos;
+                }
+            }
         }
 
         private void UpdateZoom()
