@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7961c77ab2b9c4e9e1759f7090555f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 0
+  Type: 1
 --- !u!114 &586486538392157299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03aff2ac8f753924aa4a8a0807b354eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 1
+  Type: 2
 --- !u!64 &586486538138979465
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -6,6 +6,19 @@ namespace Laser.Game.Main.Grid
     [ExecuteInEditMode]
     public class GridElementController : MonoBehaviour
     {
+        public GridTile Tile
+        {
+            get
+            {
+                return new GridTile(X, Y);
+            }
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+
         public bool IsDirty
         { 
             get

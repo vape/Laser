@@ -1,8 +1,6 @@
 {
-    "name": "Laser",
-    "references": [
-        "GUID:2bbe6036f65439d4dbeb8f93d8302501"
-    ],
+    "name": "Laser.Shared",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

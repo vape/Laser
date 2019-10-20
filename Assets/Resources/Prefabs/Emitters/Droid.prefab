@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4845079964146250876}
   - component: {fileID: 4845079964146250873}
-  - component: {fileID: 4845079964146250874}
-  - component: {fileID: 4845079964146250872}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -49,32 +47,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4845079964146250874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4845079964146250877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03aff2ac8f753924aa4a8a0807b354eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 0
---- !u!114 &4845079964146250872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4845079964146250877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bed7f3e58c7aa4f4a9b2dc041c64aa51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RayLine: {fileID: 4845079964999606267}
 --- !u!1 &4845079964875644605
 GameObject:
   m_ObjectHideFlags: 0
@@ -84,6 +56,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4845079964875644604}
+  - component: {fileID: 1436083884}
+  - component: {fileID: 6607497098725264439}
+  - component: {fileID: 5037350164229943751}
   m_Layer: 0
   m_Name: Droid
   m_TagString: Untagged
@@ -106,6 +81,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1436083884
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845079964875644605}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &6607497098725264439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845079964875644605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03aff2ac8f753924aa4a8a0807b354eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 1
+--- !u!114 &5037350164229943751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845079964875644605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bed7f3e58c7aa4f4a9b2dc041c64aa51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 1
+  RayLine: {fileID: 4845079964999606267}
 --- !u!1 &4845079964999606269
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4845079965210111832
 Transform:
   m_ObjectHideFlags: 0
@@ -385,8 +403,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
         type: 3}
-      propertyPath: m_ImportantGI
-      value: 1
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e72404f40c3621448a397b6481b9715b, type: 2}
+    - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
         type: 3}
@@ -395,20 +418,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
         type: 3}
-      propertyPath: m_ReflectionProbeUsage
+      propertyPath: m_ImportantGI
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
-        type: 3}
-      propertyPath: m_ReceiveGI
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: -1504981713932161579, guid: 1e82d9b790eb63f419d3554362e871e8,
-        type: 3}
-      propertyPath: m_ProbeAnchor
-      value: 
-      objectReference: {fileID: 1636487504019882312, guid: 93b4799154f2b0b41acfd877828ef7ae,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e82d9b790eb63f419d3554362e871e8, type: 3}
 --- !u!4 &452499889297965257 stripped

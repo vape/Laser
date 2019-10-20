@@ -6,6 +6,7 @@ namespace Laser.Game.Main
 {
     public class EmitterController : MonoBehaviour
     {
+        public EmitterType Type;
         public LineRenderer RayLine;
 
         private Tracer tracer = new Tracer();

@@ -1,10 +1,14 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Laser.Game.Main.Grid
 {
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public struct GridTile
     {
+        [JsonProperty("x")]
         public int X;
+        [JsonProperty("y")]
         public int Y;
 
         public GridTile(int x, int y)
