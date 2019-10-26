@@ -11,7 +11,7 @@ namespace Laser.Editor
     {
         public bool ShowCoverageProjection;
 
-        [DrawGizmo(GizmoType.Selected | GizmoType.NonSelected | GizmoType.Pickable)]
+        [DrawGizmo(GizmoType.Selected)]
         private static void DrawGizmos(CameraController target, GizmoType gizmoType)
         {
             var y = 0.1f;

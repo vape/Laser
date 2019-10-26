@@ -21,21 +21,21 @@ namespace Laser.Game.Level
 
         private EmitterController SpawnEmitter(GameObject container, EmitterType type)
         {
-            var prefab = Emitters.FirstOrDefault((p) => p.Type == type).Prefab;
+            var prefab = ItemsMap.Emitters.FirstOrDefault((p) => p.Type == type).Prefab;
             var emitter = Instantiate(prefab, container.transform, false);
             return emitter;
         }
 
         private AbsorberController SpawnAbsorber(GameObject container, AbsorberType type)
         {
-            var prefab = Absorbers.FirstOrDefault((p) => p.Type == type).Prefab;
+            var prefab = ItemsMap.Absorbers.FirstOrDefault((p) => p.Type == type).Prefab;
             var absorber = Instantiate(prefab, container.transform, false);
             return absorber;
         }
 
         private ReflectorController SpawnReflector(GameObject container, ReflectorType type)
         {
-            var prefab = Reflectors.FirstOrDefault((p) => p.Type == type).Prefab;
+            var prefab = ItemsMap.Reflectors.FirstOrDefault((p) => p.Type == type).Prefab;
             var reflector = Instantiate(prefab, container.transform, false);
             return reflector;
         }
@@ -71,6 +71,7 @@ namespace Laser.Game.Level
                 }
             }
 
+            levelLoaded = true;
             Grid.IsDirty = true;
         }
 
@@ -85,6 +86,7 @@ namespace Laser.Game.Level
         public void Unload()
         {
             Grid.transform.DestroyChildrens(true);
+            levelLoaded = false;
         }
     }
 }

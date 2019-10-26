@@ -75,6 +75,23 @@ namespace Laser.Game.Main.Grid
             }
         }
 
+        public bool CanPlaceIn(GridElementController newElement, GridTile tile)
+        {
+            for (int i = 0; i < transform.childCount; ++i)
+            {
+                var element = transform.GetChild(i).GetComponent<GridElementController>();
+                if (element != null)
+                {
+                    if (element != newElement && element.X == tile.X && element.Y == tile.Y)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public Vector2? RaycastGrid(Ray ray)
         {
             var plane = new Plane(Vector3.up, Origin);
@@ -124,6 +141,17 @@ namespace Laser.Game.Main.Grid
             var y0 = (tile.Y * CellSize);
 
             return new Rect(x0, y0, CellSize, CellSize);
+        }
+
+        public Vector3[] GetWorldSpacedTileRect(GridTile tile)
+        {
+            var rect = GetTileRect(tile);
+            var v0 = GridToWorld(new Vector2(rect.xMin, rect.yMin));
+            var v1 = GridToWorld(new Vector2(rect.xMax, rect.yMin));
+            var v2 = GridToWorld(new Vector2(rect.xMax, rect.yMax));
+            var v3 = GridToWorld(new Vector2(rect.xMin, rect.yMax));
+
+            return new Vector3[4] { v0, v1, v2, v3 };
         }
     }
 }

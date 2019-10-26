@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Laser.Game.Main.Grid
 {
+    [SelectionBase]
     [ExecuteInEditMode]
     public class GridElementController : MonoBehaviour
     {
@@ -27,24 +28,21 @@ namespace Laser.Game.Main.Grid
             }
             set
             {
-                if (isDirty != value)
-                {
-                    isDirty = value;
+                isDirty = value;
 
-                    if (isDirty)
+                if (isDirty && transform.parent != null)
+                {
+                    var parentElement = transform.parent.GetComponent<GridElementController>();
+                    if (parentElement != null)
                     {
-                        var parentElement = transform.parent.GetComponent<GridElementController>();
-                        if (parentElement != null)
+                        parentElement.IsDirty = true;
+                    }
+                    else
+                    {
+                        var parent = transform.parent.GetComponent<GridController>();
+                        if (parent != null)
                         {
-                            parentElement.IsDirty = true;
-                        }
-                        else
-                        {
-                            var parent = transform.parent.GetComponent<GridController>();
-                            if (parent != null)
-                            {
-                                parent.IsDirty = true;
-                            }
+                            parent.IsDirty = true;
                         }
                     }
                 }
@@ -59,8 +57,11 @@ namespace Laser.Game.Main.Grid
             }
             set
             {
-                x = value;
-                IsDirty = true;
+                if (x != value)
+                {
+                    x = value;
+                    IsDirty = true;
+                }
             }
         }
         public int Y
@@ -71,8 +72,11 @@ namespace Laser.Game.Main.Grid
             }
             set
             {
-                y = value;
-                IsDirty = true;
+                if (y != value)
+                {
+                    y = value;
+                    IsDirty = true;
+                }
             }
         }
 
