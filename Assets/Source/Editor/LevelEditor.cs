@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Laser.Editor
 {
     [CustomEditor(typeof(LevelController))]
-    public class LevelControllerEditor : UnityEditor.Editor
+    public class LevelEditor : UnityEditor.Editor
     {
         private GridElementController entityToSpawnGridElementContainer;
         private int placeControlId;
