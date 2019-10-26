@@ -14,6 +14,11 @@ namespace Laser.Game.Level
             }
         }
 
+#if UNITY_EDITOR
+        public LevelEntity EntityToSpawn
+        { get; set; }
+#endif
+
         public GridController Grid;
         public LevelItemsMap ItemsMap;
 

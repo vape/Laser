@@ -23,6 +23,11 @@ namespace Laser.Game.Level
                         continue;
                     }
 
+                    if (gridElement.tag == "EditorOnly")
+                    {
+                        continue;
+                    }
+
                     var mainEntity = gridElement.transform.GetChild(0);
                     if (mainEntity.gameObject.TryGetComponent<LevelEntityController>(out var entity))
                     {

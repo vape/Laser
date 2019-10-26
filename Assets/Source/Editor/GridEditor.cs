@@ -8,9 +8,6 @@ namespace Laser.Editor
     [CustomEditor(typeof(GridController))]
     public partial class GridEditor : UnityEditor.Editor
     {
-        private static Vector3? tileRectPosition;
-        private static Vector3? tileRectSize;
-
         private static void DrawGridOutline(GridController target)
         {
             for (int y = 0; y < target.Height; ++y)
@@ -41,15 +38,6 @@ namespace Laser.Editor
         {
             Gizmos.color = Color.black;
             DrawGridOutline(target);
-
-            if ((gizmoType & GizmoType.Selected) != 0)
-            {
-                if (tileRectPosition != null)
-                {
-                    Gizmos.color = new Color(1, 0, 0, 0.75f);
-                    Gizmos.DrawCube(tileRectPosition.Value, tileRectSize.Value);
-                }
-            }
         }
 
         public override void OnInspectorGUI()
@@ -59,33 +47,6 @@ namespace Laser.Editor
             if (GUILayout.Button("Layout now"))
             {
                 ((GridController)target).Layout();
-            }
-        }
-
-        private void OnSceneGUI()
-        {
-            if (Event.current.type == EventType.MouseMove)
-            {
-                var _target = ((GridController)target);
-
-                var cameraRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                var gridPosition = _target.RaycastGrid(cameraRay);
-
-                if (gridPosition != null)
-                {
-                    var rect = _target.GetTileRect(_target.GetGridTile(gridPosition.Value));
-                    var a = _target.GridToWorld(new Vector2(rect.xMin, rect.yMin));
-                    var b = _target.GridToWorld(new Vector2(rect.xMax, rect.yMax));
-
-                    tileRectPosition = _target.GridToWorld(rect.center) + new Vector3(0, 1, 0);
-                    tileRectSize = new Vector3(b.x - a.x, 1, b.z - a.z);
-                }
-            }
-
-            if (Event.current.type == EventType.Repaint)
-            {
-                // repaint gizmos
-                SceneView.RepaintAll();
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Laser.Game.Level
 {
     public partial class LevelController : MonoBehaviour
     {
-        private GridElementController CreateGridElement(GridTile tile)
+        public GridElementController CreateGridElement(GridTile tile)
         {
             var elem = new GameObject($"GridElement", typeof(GridElementController)).GetComponent<GridElementController>();
             elem.Tile = tile;
@@ -19,25 +19,48 @@ namespace Laser.Game.Level
             return elem;
         }
 
-        private EmitterController SpawnEmitter(GameObject container, EmitterType type)
+        public EmitterController SpawnEmitter(GridElementController container, EmitterType type)
         {
             var prefab = ItemsMap.Emitters.FirstOrDefault((p) => p.Type == type).Prefab;
             var emitter = Instantiate(prefab, container.transform, false);
             return emitter;
         }
 
-        private AbsorberController SpawnAbsorber(GameObject container, AbsorberType type)
+        public AbsorberController SpawnAbsorber(GridElementController container, AbsorberType type)
         {
             var prefab = ItemsMap.Absorbers.FirstOrDefault((p) => p.Type == type).Prefab;
             var absorber = Instantiate(prefab, container.transform, false);
             return absorber;
         }
 
-        private ReflectorController SpawnReflector(GameObject container, ReflectorType type)
+        public ReflectorController SpawnReflector(GridElementController container, ReflectorType type)
         {
             var prefab = ItemsMap.Reflectors.FirstOrDefault((p) => p.Type == type).Prefab;
             var reflector = Instantiate(prefab, container.transform, false);
             return reflector;
+        }
+
+        public GameObject InstantiateEntity(GridElementController container, LevelEntity entity)
+        {
+            switch (entity.Type)
+            {
+                case EntityType.Emitter:
+                    return SpawnEmitter(container, entity.EmitterType).gameObject;
+                case EntityType.Absorber:
+                    return SpawnAbsorber(container, entity.AbsorberType).gameObject;
+                case EntityType.Reflector:
+                    return SpawnReflector(container, entity.ReflectorType).gameObject;
+                default:
+                    throw new Exception($"Unknown entity type {entity.Type}.");
+            }
+        }
+
+        public void SpawnEntity(LevelEntity entity)
+        {
+            var gridElem = CreateGridElement(entity.Tile);
+            gridElem.name = $"GridElement_{entity.Type}";
+
+            InstantiateEntity(gridElem, entity);
         }
 
         public void Load(LevelData data)
@@ -52,23 +75,7 @@ namespace Laser.Game.Level
                     throw new NotImplementedException();
                 }
 
-                var gridElem = CreateGridElement(entity.Tile);
-                gridElem.name = $"GridElement_{entity.Type}_{i}";
-
-                switch (entity.Type)
-                {
-                    case EntityType.Emitter:
-                        SpawnEmitter(gridElem.gameObject, entity.EmitterType);
-                        break;
-                    case EntityType.Absorber:
-                        SpawnAbsorber(gridElem.gameObject, entity.AbsorberType);
-                        break;
-                    case EntityType.Reflector:
-                        SpawnReflector(gridElem.gameObject, entity.ReflectorType);
-                        break;
-                    default:
-                        throw new Exception($"Unknown entity type {entity.Type}.");
-                }
+                SpawnEntity(entity);
             }
 
             levelLoaded = true;

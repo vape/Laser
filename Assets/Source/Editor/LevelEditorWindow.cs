@@ -89,6 +89,9 @@ namespace Laser.Editor
         }
 
         private string levelName;
+        private AbsorberType selectedAbsorberType;
+        private ReflectorType selectedReflectorType;
+        private EmitterType selectedEmitterType;
 
         private void Awake()
         {
@@ -103,6 +106,7 @@ namespace Laser.Editor
         private void OnGUI()
         {
             RenderMenu("Level", RenderLevelManagmentMenu);
+            RenderMenu("Tiled Items", RenderItemsManagmentMenu);
         }
 
         private void RenderMenu(string name, Action render)
@@ -111,33 +115,103 @@ namespace Laser.Editor
             render?.Invoke();
         }
 
+        private bool guiEnabled = true;
+
+        private void SetEnabled(bool value)
+        {
+            guiEnabled = GUI.enabled;
+            GUI.enabled = value;
+        }
+
+        private void ResetEnabled()
+        {
+            GUI.enabled = guiEnabled;
+        }
+
         private void RenderLevelManagmentMenu()
         {
+            if (!LevelController.IsLevelLoaded)
+            {
+                GUILayout.Label("Level isn't loaded.");
+            }
+            else
+            {
+                GUILayout.Label($"Current level: " + LastLoadedLevel);
+            }
+
             levelName = GUILayout.TextField(levelName);
 
             EditorGUILayout.BeginHorizontal();
 
-            GUI.enabled = LevelController.IsLevelLoaded;
-            if (GUILayout.Button("Save"))
             {
-                SaveLevel(levelName);
+                SetEnabled(LevelController.IsLevelLoaded);
+                if (GUILayout.Button("Save"))
+                {
+                    SaveLevel(levelName);
+                }
+                ResetEnabled();
             }
-            GUI.enabled = true;
 
-            GUI.enabled = !String.IsNullOrWhiteSpace(levelName);
-            if (GUILayout.Button("Load"))
             {
-                LoadLevel(levelName);
-                LastLoadedLevel = levelName;
+                SetEnabled(!String.IsNullOrWhiteSpace(levelName));
+                if (GUILayout.Button("Load"))
+                {
+                    LoadLevel(levelName);
+                    LastLoadedLevel = levelName;
+                }
+                ResetEnabled();
             }
-            GUI.enabled = true;
 
-            GUI.enabled = LevelController.IsLevelLoaded;
-            if (GUILayout.Button("Unload"))
             {
-                UnloadLevel();
+                SetEnabled(LevelController.IsLevelLoaded);
+                if (GUILayout.Button("Unload"))
+                {
+                    UnloadLevel();
+                }
+                ResetEnabled();
             }
-            GUI.enabled = true;
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void RenderItemsManagmentMenu()
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            selectedAbsorberType = (AbsorberType)EditorGUILayout.EnumPopup(selectedAbsorberType);
+            selectedReflectorType = (ReflectorType)EditorGUILayout.EnumPopup(selectedReflectorType);
+            selectedEmitterType = (EmitterType)EditorGUILayout.EnumPopup(selectedEmitterType);
+
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+
+            {
+                SetEnabled(selectedAbsorberType != AbsorberType.None);
+                if (GUILayout.Button("Spawn"))
+                {
+                    TrySetEntityToSpawn(new LevelEntity() { Type = EntityType.Absorber, AbsorberType = selectedAbsorberType });
+                }
+                ResetEnabled();
+            }
+
+            {
+                SetEnabled(selectedReflectorType != ReflectorType.None);
+                if (GUILayout.Button("Spawn"))
+                {
+                    TrySetEntityToSpawn(new LevelEntity() { Type = EntityType.Reflector, ReflectorType = selectedReflectorType });
+                }
+                ResetEnabled();
+            }
+
+            {
+                SetEnabled(selectedEmitterType != EmitterType.None);
+                if (GUILayout.Button("Spawn"))
+                {
+                    TrySetEntityToSpawn(new LevelEntity() { Type = EntityType.Emitter, EmitterType = selectedEmitterType });
+                }
+                ResetEnabled();
+            }
 
             EditorGUILayout.EndHorizontal();
         }
@@ -180,6 +254,17 @@ namespace Laser.Editor
             }
 
             return true;
+        }
+
+        private void TrySetEntityToSpawn(LevelEntity entity)
+        {
+            if (LevelController == null)
+            {
+                return;
+            }
+
+            Selection.activeGameObject = LevelController.gameObject;
+            LevelController.EntityToSpawn = entity;
         }
     }
 }

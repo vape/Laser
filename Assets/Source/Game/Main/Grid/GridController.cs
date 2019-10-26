@@ -104,6 +104,17 @@ namespace Laser.Game.Main.Grid
             return null;
         }
 
+        public GridTile? RaycastTile(Ray ray)
+        {
+            var gp = RaycastGrid(ray);
+            if (gp == null)
+            {
+                return null;
+            }
+
+            return GetGridTile(gp.Value);
+        }
+
         public Vector2 WorldToGrid(Vector3 worldPosition)
         {
             var local = transform.InverseTransformPoint(worldPosition);
