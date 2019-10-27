@@ -35,6 +35,7 @@ namespace Laser.Game.Level
                         serializableEntity.IsTiled = true;
                         serializableEntity.Type = entity.Type;
                         serializableEntity.Tile = gridElement.Tile;
+                        serializableEntity.Orientation = entity.Orientation;
 
                         if (entity.Type == EntityType.Reflector)
                         {

@@ -11,21 +11,25 @@ namespace Laser.Game.Level
         [JsonProperty("tile")]
         public GridTile Tile;
 
+        [DefaultValue(EntityOrientation.N)]
+        [JsonProperty("orient", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public EntityOrientation Orientation;
+
         [JsonProperty("tiled")]
         public bool IsTiled;
 
         [JsonProperty("type")]
         public EntityType Type;
 
-        [DefaultValueAttribute(ReflectorType.None)]
+        [DefaultValue(ReflectorType.None)]
         [JsonProperty("r_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public ReflectorType ReflectorType;
 
-        [DefaultValueAttribute(EmitterType.None)]
+        [DefaultValue(EmitterType.None)]
         [JsonProperty("e_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public EmitterType EmitterType;
 
-        [DefaultValueAttribute(AbsorberType.None)]
+        [DefaultValue(AbsorberType.None)]
         [JsonProperty("a_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public AbsorberType AbsorberType;
     }

@@ -55,12 +55,15 @@ namespace Laser.Game.Level
             }
         }
 
-        public void SpawnEntity(LevelEntity entity)
+        public LevelEntityController SpawnEntity(LevelEntity entity)
         {
             var gridElem = CreateGridElement(entity.Tile);
             gridElem.name = $"GridElement_{entity.Type}";
 
-            InstantiateEntity(gridElem, entity);
+            var entityController = InstantiateEntity(gridElem, entity).GetComponent<LevelEntityController>();
+            entityController.Orientation = entity.Orientation;
+            entityController.ApplyOrientation(true);
+            return entityController;
         }
 
         public void Load(LevelData data)
