@@ -1,9 +1,6 @@
-using Laser.Game.Level;
+﻿using Laser.Game.Level;
+using Laser.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Laser.Game
@@ -12,7 +9,8 @@ namespace Laser.Game
     {
         Menu,
         Playing,
-        EditorPlaying
+        EditorPlaying,
+        Won
     }
 
     public class GameManager : MonoBehaviour
@@ -27,19 +25,34 @@ namespace Laser.Game
             }
             set
             {
+                var prev = gameState;
                 gameState = value;
                 L.Debug($"Game state is set to {gameState}.");
+                InitState(prev);
             }
         }
 
         public LevelSequence LevelSequence;
         public LevelController LevelController;
+        public UIManager UIManager;
 
         private GameState gameState;
 
         private void Awake()
         {
-            GameState = EditorMode ? GameState.EditorPlaying : GameState.Menu;
+            if (EditorMode)
+            {
+                GameState = GameState.EditorPlaying;
+            }
+            else
+            {
+                OpenMainMenuScreen();
+            }
+        }
+
+        private void Update()
+        {
+            UpdateState();
         }
 
         public void LoadNextLevel()
@@ -56,29 +69,55 @@ namespace Laser.Game
             }
 
             LevelController.Load(LevelSequence.Levels[level]);
+            GameState = GameState.Playing;
         }
 
-        private void Update()
+        public void OpenMainMenuScreen()
+        {
+            if (GameState == GameState.EditorPlaying)
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                return;
+            }
+
+            if (LevelController.IsLevelLoaded)
+            {
+                LevelController.Unload();
+            }
+
+            UIManager.OpenScreen(ScreenType.MainMenu);
+            GameState = GameState.Menu;
+        }
+
+        private void InitState(GameState previous)
+        { }
+
+        private void UpdateState()
         {
             switch (GameState)
             {
                 case GameState.Playing:
                     UpdatePlayingState();
                     break;
-                case GameState.EditorPlaying:
-                    UpdateEditorPlayingState();
-                    break;
             }
-        }
-
-        private void UpdateEditorPlayingState()
-        {
-            
         }
 
         private void UpdatePlayingState()
         {
+            if (LevelController.State == LevelState.Won)
+            {
+                HandleWin();
+            }
+        }
 
+        private void HandleWin()
+        {
+            App.Profile.Progression.CurrentLevel++;
+            App.SaveProfile();
+            GameState = GameState.Won;
+            UIManager.OpenScreen(ScreenType.Win);
         }
     }
 }

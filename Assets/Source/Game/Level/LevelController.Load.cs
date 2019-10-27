@@ -97,6 +97,7 @@ namespace Laser.Game.Level
 
             levelLoaded = true;
             Grid.IsDirty = true;
+            State = LevelState.None;
         }
 
         public void Load(string name)
