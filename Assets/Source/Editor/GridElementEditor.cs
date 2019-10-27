@@ -1,4 +1,7 @@
+using Laser.Game.Main;
 using Laser.Game.Main.Grid;
+using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,24 +35,48 @@ namespace Laser.Editor
         private void OnEnable()
         {
             Tools.hidden = true;
+            Undo.undoRedoPerformed += UndoCallback;
         }
 
         private void OnDisable()
         {
             Tools.hidden = false;
+            Undo.undoRedoPerformed -= UndoCallback;
+        }
+
+        private void UndoCallback()
+        {
+            if (target == null)
+            {
+                return;
+            }
+            var elem = target as GridElementController;
+            var entity = elem.GetComponentInChildren<LevelEntityController>();
+            if (entity != null)
+            {
+                entity.ApplyOrientation(true);
+            }
         }
 
         public GridTile targetTile;
         public bool isSuitableTile = true;
+        private Vector2 dragStartPosition;
+        private float currentRotation;
 
         private void OnSceneGUI()
         {
-            MovingHandle();
+            var elem = target as GridElementController;
+            var entity = elem.GetComponentInChildren<LevelEntityController>();
+            if (entity != null)
+            {
+                LevelEntityEditor.RotationHandle(entity, ref dragStartPosition, ref currentRotation, new Color(0, 1, 0), new Color(1, 1, 0), 7);
+            }
+
+            MovingHandle(elem);
         }
 
-        private void MovingHandle()
+        private void MovingHandle(GridElementController elem)
         {
-            var elem = target as GridElementController;
             var grid = elem.GetComponentInParent<GridController>();
             if (grid == null)
             {
@@ -69,16 +96,30 @@ namespace Laser.Editor
                         gridPos = grid.RaycastGrid(ray) ?? gridPos;
                     }
 
+                    var isMoving = GUIUtility.hotControl == id;
                     var tile = grid.GetGridTile(gridPos);
                     var tileRect = grid.GetWorldSpacedTileRect(tile);
                     var rectColor = isSuitableTile ? new Color(0, 1, 0, 0.1f) : new Color(1, 0, 0, 0.3f);
                     var outlineColor = isSuitableTile ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.7f);
-                    var handleColor = outlineColor;
+                    var innerRectColor = isSuitableTile ? (isMoving ? new Color(1, 1, 0, 0.1f) : rectColor) : new Color(1, 0, 0, 0.3f);
+                    var innerRectOutlineColor = isSuitableTile ? (isMoving ? new Color(1, 1, 0, 0.5f) : outlineColor) : new Color(1, 0, 0, 0.7f);
+                    var handlePos = grid.GridToWorld(gridPos);
+                    var size = 4;
+                    var innerRectSize = size * 0.5f;
 
                     Handles.DrawSolidRectangleWithOutline(tileRect, rectColor, outlineColor);
-                    Handles.color = handleColor;
-                    Handles.DrawSolidDisc(grid.GridToWorld(gridPos), Vector3.up, 3);
-                    Handles.CircleHandleCap(id, grid.GridToWorld(gridPos), Quaternion.Euler(90, 0, 0), 3, Event.current.type);
+
+                    Handles.color = new Color(1, 1, 1, 1);
+                    Handles.color = innerRectColor;
+                    Handles.DrawSolidDisc(grid.GridToWorld(gridPos), Vector3.up, innerRectSize);
+                    Handles.color = innerRectOutlineColor;
+                    Handles.CircleHandleCap(id, grid.GridToWorld(gridPos), Quaternion.Euler(90, 0, 0), innerRectSize, Event.current.type);
+                    // Handles.DrawSolidRectangleWithOutline(CreateTileRect(handlePos, innerRectSize), innerRectColor, innerRectOutlineColor);
+                    Handles.color = innerRectOutlineColor;
+                    Handles.ArrowHandleCap(id, handlePos + Vector3.forward * innerRectSize, Quaternion.identity, size, Event.current.type);
+                    Handles.ArrowHandleCap(id, handlePos + Vector3.right * innerRectSize, Quaternion.Euler(0, 90, 0), size, Event.current.type);
+                    Handles.ArrowHandleCap(id, handlePos + Vector3.back * innerRectSize, Quaternion.Euler(0, 180, 0), size, Event.current.type);
+                    Handles.ArrowHandleCap(id, handlePos + Vector3.left * innerRectSize, Quaternion.Euler(0, 270, 0), size, Event.current.type);
                     break;
                 case EventType.MouseDown:
                     if (HandleUtility.nearestControl == id && Event.current.button == 0)
@@ -121,6 +162,16 @@ namespace Laser.Editor
 
             targetTile = gridPosition == null ? new GridTile(0, 0) : grid.GetGridTile(gridPosition.Value);
             isSuitableTile = grid.CanPlaceIn(elem, targetTile);
+        }
+
+        private Vector3[] CreateTileRect(Vector3 center, float size)
+        {
+            var v0 = new Vector3(center.x - size, 0, center.z - size);
+            var v1 = new Vector3(center.x + size, 0, center.z - size);
+            var v2 = new Vector3(center.x + size, 0, center.z + size);
+            var v3 = new Vector3(center.x - size, 0, center.z + size);
+
+            return new Vector3[4] { v0, v1, v2, v3 };
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Laser.Editor
 
         private static List<(EntityOrientation orientation, float angle)> orientations;
 
-        public static void RotationHandle(LevelEntityController entity, ref Vector2 dragStartPosition, ref float currentRotation, Color? baseInactiveColor = null, Color? baseActiveColor = null)
+        public static void RotationHandle(LevelEntityController entity, ref Vector2 dragStartPosition, ref float currentRotation, Color? baseInactiveColor = null, Color? baseActiveColor = null, int? fixedSize = null)
         {
             var id = GUIUtility.GetControlID(FocusType.Passive);
             baseInactiveColor = baseInactiveColor ?? new Color(0.6f, 1, 0.2f);
@@ -38,7 +38,7 @@ namespace Laser.Editor
             {
                 case EventType.Repaint:
                 case EventType.Layout:
-                    var size = HandleUtility.GetHandleSize(entity.transform.position);
+                    var size = fixedSize == null ? HandleUtility.GetHandleSize(entity.transform.position) : fixedSize.Value;
                     var radius = 1.5f * size;
                     var isRotating = GUIUtility.hotControl == id;
                     var fillColor = isRotating ? new Color(1, 1, 1, 0.1f) * baseActiveColor.Value : new Color(1, 1, 1, 0.05f) * baseInactiveColor.Value;
