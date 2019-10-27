@@ -1,3 +1,4 @@
+using Laser.Game.Level;
 using UnityEngine;
 
 namespace Laser.Game.Main
@@ -51,6 +52,11 @@ namespace Laser.Game.Main
 
     public class LevelEntityController : MonoBehaviour
     {
+        public bool IsStationary
+        { get; private set; }
+        public EntityRulesBridge RulesBridge 
+        { get; set; }
+
         public EntityType Type;
         public EntityOrientation Orientation;
 
@@ -66,6 +72,8 @@ namespace Laser.Game.Main
         {
             var a = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, targetAngle, ref speedTowardsTargetAngle, 0.1f);
             transform.rotation = Quaternion.Euler(0, a, 0);
+
+            IsStationary = Mathf.Approximately(a, targetAngle);
         }
 
         public void ApplyOrientation(bool immediate = false)

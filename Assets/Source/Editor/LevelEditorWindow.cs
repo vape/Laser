@@ -1,3 +1,4 @@
+using Laser.Game;
 using Laser.Game.Level;
 using Laser.Game.Main;
 using Laser.Game.Main.Grid;
@@ -97,6 +98,7 @@ namespace Laser.Editor
         private ReflectorType selectedReflectorType;
         private EmitterType selectedEmitterType;
         private LevelData currentPlayingLevel;
+        private Logger log = new Logger("LevelEditor");
 
         private void Awake()
         {
@@ -116,7 +118,7 @@ namespace Laser.Editor
             if (currentPlayingLevel != null)
             {
                 levelController.Load(currentPlayingLevel);
-                Debug.Log("Restored current playing level state.");
+                log.Info("Restored current playing level state.");
             }
         }
 
@@ -139,12 +141,19 @@ namespace Laser.Editor
 
         private void PlayModeChanged(PlayModeStateChange mode)
         { 
+            if (!validActiveScene)
+            {
+                return;
+            }
+
             if (mode == PlayModeStateChange.EnteredPlayMode)
             {
+                GameManager.EditorMode = true;
                 LoadPlayScene();
             }
             else if (mode == PlayModeStateChange.EnteredEditMode)
             {
+                GameManager.EditorMode = false;
                 TryReinit();
             }
         }
@@ -312,7 +321,7 @@ namespace Laser.Editor
         {
             LevelController.Unload();
 
-            L.Info($"Successfully unloaded level!");
+            log.Info($"Successfully unloaded level!");
         }
 
         private void LoadLevel(string name)
@@ -320,7 +329,7 @@ namespace Laser.Editor
             var data = Read($"{name}.json");
             LevelController.Load(data);
 
-            L.Info($"Successfully loaded level {name}!");
+            log.Info($"Successfully loaded level {name}!");
         }
 
         private void SaveLevel(string name)
@@ -330,7 +339,7 @@ namespace Laser.Editor
             Validate(data);
             Write($"{name}.json", data);
 
-            L.Info($"Successfully saved level \"{name}\"!");
+            log.Info($"Successfully saved level \"{name}\"!");
         }
 
         private bool Validate(LevelData data)

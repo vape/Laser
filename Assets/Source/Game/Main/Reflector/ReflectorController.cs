@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Laser.Game.Main
 {
+    [RequireComponent(typeof(LevelEntityController))]
     public class ReflectorController : MonoBehaviour, IGameObjectClickHandler
     {
         public List<EntityOrientation> AvailableOrientations
@@ -17,29 +18,45 @@ namespace Laser.Game.Main
             EntityOrientation.W,
             EntityOrientation.NW
         };
+        private LevelEntityController EntityController
+        {
+            get
+            {
+                if (entityController == null)
+                {
+                    entityController = GetComponent<LevelEntityController>();
+                }
+
+                return entityController;
+            }
+        }
 
         public ReflectorType Type;
 
+        private LevelEntityController entityController;
+
         public void NextOrientation()
         {
-            var entity = GetComponent<LevelEntityController>();
-            if (!AvailableOrientations.Contains(entity.Orientation))
+            if (!AvailableOrientations.Contains(EntityController.Orientation))
             {
-                entity.Orientation = AvailableOrientations[0];
+                EntityController.Orientation = AvailableOrientations[0];
             }
             else
             {
-                var index = AvailableOrientations.IndexOf(entity.Orientation);
+                var index = AvailableOrientations.IndexOf(EntityController.Orientation);
                 index = AvailableOrientations.Count - 1 == index ? 0 : index + 1;
-                entity.Orientation = AvailableOrientations[index];
+                EntityController.Orientation = AvailableOrientations[index];
             }
 
-            entity.ApplyOrientation();
+            EntityController.ApplyOrientation();
         }
 
         public void HandleClick()
         {
-            NextOrientation();
+            if (EntityController.RulesBridge?.IsLevelInteractive ?? true)
+            {
+                NextOrientation();
+            }
         }
     }
 }

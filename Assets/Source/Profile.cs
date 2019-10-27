@@ -1,3 +1,4 @@
+using Laser.Game;
 using Newtonsoft.Json;
 using System;
 
@@ -19,6 +20,10 @@ namespace Laser
         public DateTime SaveTime
         { get; set; }
 
+        [JsonProperty]
+        public Progression Progression
+        { get; set; }
+
         public Profile()
             : this(false)
         { }
@@ -26,7 +31,9 @@ namespace Laser
         private Profile(bool initAsNew)
         {
             if (initAsNew)
-            { }
+            {
+                Progression = new Progression();
+            }
         }
     }
 }

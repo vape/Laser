@@ -6,12 +6,15 @@ namespace Laser.Game.Main
 {
     public class EmitterController : MonoBehaviour
     {
+        public AbsorberController LitAbsorber
+        { get { return litAbsorber; } }
+
         public EmitterType Type;
         public LineRenderer RayLine;
 
         private Tracer tracer = new Tracer();
         private Trace currentTrace;
-        private AbsorberController touchedAbsorber;
+        private AbsorberController litAbsorber;
         private int skippedFrames;
 
         private void FixedUpdate()
@@ -29,7 +32,7 @@ namespace Laser.Game.Main
 
         private void RefreshTrace()
         {
-            touchedAbsorber = null;
+            litAbsorber = null;
             currentTrace = tracer.Trace(RayLine.transform.position, transform.rotation * Vector3.forward);
 
             for (int i = 0; i < currentTrace.Points.Count; ++i)
@@ -37,7 +40,7 @@ namespace Laser.Game.Main
                 var absorber = currentTrace.Points[i].Transform?.GetComponent<AbsorberController>();
                 if (absorber != null)
                 {
-                    touchedAbsorber = absorber;
+                    litAbsorber = absorber;
                     break;
                 }
             }
@@ -59,7 +62,7 @@ namespace Laser.Game.Main
                 _positions = _positions.Concat(new Vector3[1] { p + (d * 100) });
             }
             var positions = _positions.ToArray();
-            var color = touchedAbsorber == null ? Color.red : Color.green;
+            var color = litAbsorber == null ? Color.red : Color.green;
 
             RayLine.positionCount = positions.Length;
             RayLine.SetPositions(positions);

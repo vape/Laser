@@ -3,6 +3,7 @@ using Laser.Game.Main.Grid;
 using Laser.Shared;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -11,6 +12,12 @@ namespace Laser.Game.Level
 {
     public partial class LevelController : MonoBehaviour
     {
+        public List<LevelEntityController> Entities
+        { get; set; } = new List<LevelEntityController>();
+
+        public List<EmitterController> Emitters
+        { get; set; } = new List<EmitterController>();
+
         public GridElementController CreateGridElement(GridTile tile)
         {
             var elem = new GameObject($"GridElement", typeof(GridElementController)).GetComponent<GridElementController>();
@@ -63,6 +70,7 @@ namespace Laser.Game.Level
             var entityController = InstantiateEntity(gridElem, entity).GetComponent<LevelEntityController>();
             entityController.Orientation = entity.Orientation;
             entityController.ApplyOrientation(true);
+            entityController.RulesBridge = rulesBridge;
             return entityController;
         }
 
@@ -78,7 +86,13 @@ namespace Laser.Game.Level
                     throw new NotImplementedException();
                 }
 
-                SpawnEntity(entity);
+                var entityController = SpawnEntity(entity);
+                Entities.Add(entityController);
+
+                if (entityController.Type == EntityType.Emitter)
+                {
+                    Emitters.Add(entityController.GetComponent<EmitterController>());
+                }
             }
 
             levelLoaded = true;
@@ -96,6 +110,8 @@ namespace Laser.Game.Level
         public void Unload()
         {
             Grid.transform.DestroyChildrens(true);
+            Entities.Clear();
+            Emitters.Clear();
             levelLoaded = false;
         }
     }
