@@ -6,7 +6,10 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace Laser.Editor
 {
@@ -88,12 +91,20 @@ namespace Laser.Editor
             }
         }
 
+        private bool validActiveScene;
         private string levelName;
         private AbsorberType selectedAbsorberType;
         private ReflectorType selectedReflectorType;
         private EmitterType selectedEmitterType;
+        private LevelData currentPlayingLevel;
 
         private void Awake()
+        {
+            AcitveSceneChanged(SceneManager.GetActiveScene(), SceneManager.GetActiveScene());
+            TryReinit();
+        }
+
+        private void Reinit()
         {
             levelName = LastLoadedLevel;
 
@@ -101,12 +112,93 @@ namespace Laser.Editor
             {
                 LoadLevel(levelName);
             }
+
+            if (currentPlayingLevel != null)
+            {
+                levelController.Load(currentPlayingLevel);
+                Debug.Log("Restored current playing level state.");
+            }
+        }
+
+        private void OnEnable()
+        {
+            EditorApplication.playModeStateChanged += PlayModeChanged;
+            EditorSceneManager.activeSceneChangedInEditMode += AcitveSceneChanged;
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.playModeStateChanged -= PlayModeChanged;
+            EditorSceneManager.activeSceneChangedInEditMode -= AcitveSceneChanged;
+        }
+
+        private void AcitveSceneChanged(Scene prev, Scene next)
+        {
+            validActiveScene = next.name == "Editor";
+        }
+
+        private void PlayModeChanged(PlayModeStateChange mode)
+        { 
+            if (mode == PlayModeStateChange.EnteredPlayMode)
+            {
+                LoadPlayScene();
+            }
+            else if (mode == PlayModeStateChange.EnteredEditMode)
+            {
+                TryReinit();
+            }
+        }
+
+        private void TryReinit()
+        {
+            if (!EditorApplication.isPlaying && validActiveScene)
+            {
+                Reinit();
+            }
         }
 
         private void OnGUI()
         {
+            if (!validActiveScene)
+            {
+                EditorGUILayout.HelpBox("Single editor scene must be opened to use level editor.", MessageType.Warning);
+                if (GUILayout.Button("Open Editor Scene"))
+                {
+                    EditorSceneManager.OpenScene("Assets/Scenes/Editor.unity", OpenSceneMode.Single);
+                }
+
+                return;
+            }
+
+            if (EditorApplication.isPlaying)
+            {
+                EditorGUILayout.HelpBox("Editing level in play mode is not supported.", MessageType.Info);
+                return;
+            }
+
             RenderMenu("Level", RenderLevelManagmentMenu);
             RenderMenu("Tiled Items", RenderItemsManagmentMenu);
+        }
+
+        private void LoadPlayScene()
+        {
+            currentPlayingLevel = LevelController.Save();
+
+            UnityAction<Scene, LoadSceneMode> sceneLoadedHandler = null;
+            sceneLoadedHandler = (scene, mode) => {
+                SceneManager.sceneLoaded -= sceneLoadedHandler;
+                if (scene.name == "Game")
+                {
+                    FindObjectsOfType<LevelController>()
+                        .Where((l) => l.gameObject.scene.name == "Game")
+                        .FirstOrDefault()
+                        ?.Load(currentPlayingLevel);
+                }
+            };
+
+            SceneManager.UnloadScene(SceneManager.GetActiveScene());
+            SceneManager.sceneLoaded += sceneLoadedHandler;
+            SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
         private void RenderMenu(string name, Action render)
