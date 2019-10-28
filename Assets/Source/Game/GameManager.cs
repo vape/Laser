@@ -1,5 +1,5 @@
 ﻿using Laser.Game.Level;
-using Laser.UI;
+using Laser.Game.UI;
 using System;
 using UnityEngine;
 
