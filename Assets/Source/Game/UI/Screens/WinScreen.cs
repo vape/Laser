@@ -1,6 +1,4 @@
-using Laser.Game;
-
-namespace Laser.UI.Screens
+namespace Laser.Game.UI.Screens
 {
     public class WinScreen : ScreenController
     {

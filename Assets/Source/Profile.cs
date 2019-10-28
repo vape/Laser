@@ -1,4 +1,4 @@
-using Laser.Game;
+using Laser.Core;
 using Newtonsoft.Json;
 using System;
 

@@ -205,7 +205,7 @@ namespace Laser.Editor
                 }
             };
 
-            SceneManager.UnloadScene(SceneManager.GetActiveScene());
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
             SceneManager.sceneLoaded += sceneLoadedHandler;
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
